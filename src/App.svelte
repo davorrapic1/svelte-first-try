@@ -1,8 +1,12 @@
 <script>
 
+
+	import Host from './Host.svelte';
+	import Mx from './Mx.svelte';
 	import axios from 'axios';
 	import { onMount } from 'svelte';
 
+	let baseUrl = 'http://tracker.mycode.com.hr/api/values/';
 	let domain = '';
 	let webData = [];
 	let mxData = [];
@@ -10,7 +14,7 @@
 
 
 	function getRecords() {
-		axios.get('http://tracker.mycode.com.hr/api/values/' + domain.trim()).then(res => {
+		axios.get(baseUrl + domain.trim()).then(res => {
 		webData = res.data.webHostData;
 		mxData = res.data.emailData;
 	})
@@ -19,31 +23,29 @@
 </script>
 
 <style>
+
+.page {
+	height: 100%;
+	width: 100%;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+
+	}
 	
 </style>
 
-<div>
+<div class="page">
+<div class="container">
 	<div>
 		<input bind:value={domain} placeholder="Enter your domain here">
 		<button on:click={getRecords}> Get Dns records</button>
 	</div>
 
-	{#if webData.length > 0}
-	{#each webData as data}
-	<h3> Server name is: {data.hostName}</h3>
-	<h3>Server IP is: {data.hostIp}</h3>
-	{/each}
-	{:else}
-	<h1>no web data to show</h1>
-	{/if}
+	<Host aRecords={webData} />
 
-	{#if mxData.length > 0}
-	{#each mxData as data}
-	<h3> Mx record is: {data.mxRecord}</h3>
-	{/each}
-	{:else}
-	<h1>no email data to show</h1>
-	{/if}
-
+	<Mx mxRecords={mxData} />
+	</div>
 </div>
 
